@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
 import { NgModule } from '@angular/core';
 import { ProductEditComponent } from './product-edit/product-edit.component';
+import { ProductEffects } from './state/product.effects';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { ProductsListComponent } from './products-list/products-list.component';
 import { ProductsPageComponent } from './products-page/products-page.component';
@@ -22,6 +23,7 @@ import { productsReducer } from './state/products.reducer';
     ProductsRoutingModule,
     ReactiveFormsModule,
     StoreModule.forFeature('products', productsReducer),
+    EffectsModule.forFeature([ProductEffects])
   ],
 })
 export class ProductsModule { }

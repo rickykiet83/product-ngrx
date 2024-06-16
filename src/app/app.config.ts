@@ -2,33 +2,49 @@ import {
   ApplicationConfig,
   importProvidersFrom,
   isDevMode,
-  provideZoneChangeDetection,
 } from '@angular/core';
-import { EffectsModule, provideEffects } from '@ngrx/effects';
+import { RouterState, provideRouterStore } from '@ngrx/router-store';
 import { StoreModule, provideStore } from '@ngrx/store';
-import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
+import { metaReducers, reducers, routerFeatureKey } from './reducers';
+import {
+  provideRouter,
+  withEnabledBlockingInitialNavigation,
+} from '@angular/router';
 
+import { EffectsModule } from '@ngrx/effects';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { appRoutes } from './app.routes';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideStoreDevtools({
-      maxAge: 25,
-      logOnly: !isDevMode(),
+    provideStore(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictStateSerializability: true,
+        strictActionSerializability: true,
+      },
     }),
-    provideEffects(),
-    provideStore(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideHttpClient(),
+    provideRouterStore({
+      stateKey: routerFeatureKey,
+      routerState: RouterState.Minimal,
+    }),
+    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideAnimationsAsync(),
     importProvidersFrom([
       HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
-      EffectsModule.forRoot([]),
       StoreModule.forRoot({}),
+      EffectsModule.forRoot([]),
+      StoreDevtoolsModule.instrument({
+        maxAge: 25,
+        logOnly: !isDevMode()
+      })
     ]),
   ],
 };
