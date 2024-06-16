@@ -17,9 +17,7 @@ export class ProductsPageComponent {
   showProductCode$ = this.store.select(selectShowProductCode);
   errorMessage$ = this.store.select(selectProductsErrorMessage);
 
-  constructor(private store: Store) {
-    this.store.subscribe(store => console.log(store));
-  }
+  constructor(private store: Store) { }
 
   ngOnInit() {
     this.store.dispatch(ProductsPageActions.loadProducts());
