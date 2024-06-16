@@ -7,12 +7,14 @@ export interface ProductsState {
   showProductCode: boolean;
   loading: boolean;
   products: Product[];
+  errorMessage: string;
 }
 
 const initialState: ProductsState = {
   showProductCode: false,
   loading: false,
-  products: []
+  products: [],
+  errorMessage: ''
 };
 
 export const productsReducer = createReducer<ProductsState>(
@@ -24,12 +26,20 @@ export const productsReducer = createReducer<ProductsState>(
 
   on(ProductsPageActions.loadProducts, state => ({
     ...state,
-    loading: true
+    loading: true,
+    errorMessage: ''
   })),
 
   on(ProductAPIActions.productsLoadedSuccess, (state, { products }) => ({
     ...state,
     loading: false,
     products
+  })),
+
+  on(ProductAPIActions.productsLoadedFail, (state, { message }) => ({
+    ...state,
+    products: [],
+    errorMessage: message,
+    loading: false
   }))
 );

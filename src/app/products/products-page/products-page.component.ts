@@ -1,4 +1,4 @@
-import { selectLoading, selectProducts, selectProductsTotal, selectShowProductCode } from '../state/products.selector';
+import { selectLoading, selectProducts, selectProductsErrorMessage, selectProductsTotal, selectShowProductCode } from '../state/products.selector';
 
 import { Component } from '@angular/core';
 import { ProductsPageActions } from '../state/products.action';
@@ -15,7 +15,7 @@ export class ProductsPageComponent {
   total$ = this.store.select(selectProductsTotal);
   loading$ = this.store.select(selectLoading);
   showProductCode$ = this.store.select(selectShowProductCode);
-  errorMessage = '';
+  errorMessage$ = this.store.select(selectProductsErrorMessage);
 
   constructor(private store: Store) {
     this.store.subscribe(store => console.log(store));
