@@ -3,7 +3,7 @@ import {
   importProvidersFrom,
   isDevMode,
 } from '@angular/core';
-import { RouterState, provideRouterStore } from '@ngrx/router-store';
+import { RouterState, StoreRouterConnectingModule, provideRouterStore, routerReducer } from '@ngrx/router-store';
 import { StoreModule, provideStore } from '@ngrx/store';
 import { metaReducers, reducers, routerFeatureKey } from './reducers';
 import {
@@ -39,7 +39,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     importProvidersFrom([
       HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
-      StoreModule.forRoot({}),
+      StoreModule.forRoot({ router: routerReducer }),
+      StoreRouterConnectingModule.forRoot(),
       EffectsModule.forRoot([]),
       StoreDevtoolsModule.instrument({
         maxAge: 25,
