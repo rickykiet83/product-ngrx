@@ -1,6 +1,6 @@
 import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 import { ProductAPIActions, ProductsPageActions } from './products.action';
-import { createReducer, on } from '@ngrx/store';
+import { createReducer, on, select } from '@ngrx/store';
 
 import { Product } from '../product.model';
 
@@ -98,3 +98,11 @@ export const productsReducer = createReducer<ProductsState>(
     errorMessage: message
   })),
 );
+
+const {
+  selectAll,
+  selectEntities,
+} = adapter.getSelectors();
+
+export const selectProductsEntities = selectEntities;
+export const selectProducts = selectAll;

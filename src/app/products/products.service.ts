@@ -13,6 +13,7 @@ export class ProductsService {
   constructor(private http: HttpClient) { }
 
   getAll() {
+    console.log('Getting products');
     return this.http
       .get<Product[]>(this.productsAPIUrl)
       .pipe(catchError(this.handleError));
