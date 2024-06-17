@@ -13,13 +13,16 @@ import { Store } from '@ngrx/store';
 })
 export class ProductsPageComponent implements OnInit {
   // products$ = this.store.select(selectProducts);
-  products$ = this.productsStore.products$;
+  // products$ = this.productsStore.products$;
+  products = this.store.selectSignal(selectProducts);
   total$ = this.store.select(selectProductsTotal);
   loading$ = this.store.select(selectProductsLoading);
   showProductCode$ = this.store.select(selectProductsShowProductCode);
   errorMessage$ = this.store.select(selectProductsErrorMessage);
 
-  constructor(private store: Store, private productsStore: ProductsStore) {
+  constructor(
+    private store: Store,
+    private productsStore: ProductsStore) {
     this.store.subscribe((store) => console.log({ store }));
   }
 
