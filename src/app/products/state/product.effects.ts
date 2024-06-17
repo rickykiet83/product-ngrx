@@ -45,7 +45,7 @@ export class ProductEffects implements OnInitEffects {
       ofType(ProductsPageActions.updateProduct),
       concatMap(({ product }) =>
         this.productsService.update(product).pipe(
-          map(() => ProductAPIActions.productsUpdatedSuccess({ product })),
+          map(() => ProductAPIActions.productsUpdatedSuccess({ update: { id: product.id, changes: product } })),
           catchError((error) =>
             of(ProductAPIActions.productsUpdatedFail({ message: error }))
           )
