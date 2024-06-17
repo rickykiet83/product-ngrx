@@ -1,9 +1,10 @@
 import { Actions, OnInitEffects, createEffect, ofType } from '@ngrx/effects';
 import { ProductAPIActions, ProductsPageActions } from './products.action';
-import { catchError, concatMap, exhaustMap, map, mergeMap } from 'rxjs/operators';
+import { catchError, concatMap, exhaustMap, map, mergeMap, tap } from 'rxjs/operators';
 
 import { Injectable } from '@angular/core';
 import { ProductsService } from '../products.service';
+import { Router } from '@angular/router';
 import { of } from 'rxjs/internal/observable/of';
 
 @Injectable()
@@ -13,11 +14,9 @@ export class ProductEffects implements OnInitEffects {
     return ProductsPageActions.loadProducts();
   }
 
-  constructor(private actions$: Actions, private productService: ProductsService) { }
-
   loadProducts$ = createEffect(() => this.actions$.pipe(
     ofType(ProductsPageActions.loadProducts),
-    exhaustMap(() => this.productService
+    exhaustMap(() => this.productsService
       .getAll()
       .pipe(
         map(products =>
@@ -30,7 +29,7 @@ export class ProductEffects implements OnInitEffects {
 
   addProduct$ = createEffect(() => this.actions$.pipe(
     ofType(ProductsPageActions.addProduct),
-    mergeMap(({ product }) => this.productService
+    mergeMap(({ product }) => this.productsService
       .add(product)
       .pipe(
         map(newProduct =>
@@ -41,22 +40,23 @@ export class ProductEffects implements OnInitEffects {
       )
     )));
 
-  updateProduct$ = createEffect(() => this.actions$.pipe(
-    ofType(ProductsPageActions.updateProduct),
-    concatMap(({ product }) => this.productService
-      .update(product)
-      .pipe(
-        map(product =>
-          ProductAPIActions.productsAddedSuccess({ product })
-        ),
-        catchError(error => of(ProductAPIActions.productsUpdatedFail({ message: error }))
+  updateProduct$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProductsPageActions.updateProduct),
+      concatMap(({ product }) =>
+        this.productsService.update(product).pipe(
+          map(() => ProductAPIActions.productsUpdatedSuccess({ product })),
+          catchError((error) =>
+            of(ProductAPIActions.productsUpdatedFail({ message: error }))
+          )
         )
       )
-    )));
+    )
+  );
 
   deleteProduct$ = createEffect(() => this.actions$.pipe(
     ofType(ProductsPageActions.deleteProduct),
-    mergeMap(({ id }) => this.productService
+    mergeMap(({ id }) => this.productsService
       .delete(id)
       .pipe(
         map(() =>
@@ -66,4 +66,21 @@ export class ProductEffects implements OnInitEffects {
         )
       )
     )));
+
+  redirectToProductsPage = createEffect(
+    () => this.actions$.pipe(
+      ofType(
+        ProductAPIActions.productsAddedSuccess,
+        ProductAPIActions.productsUpdatedSuccess,
+        ProductAPIActions.productsDeletedSuccess
+      ),
+      tap(() => this.router.navigate(['/products']))),
+    { dispatch: false }
+  );
+
+  constructor(
+    private actions$: Actions,
+    private productsService: ProductsService,
+    private router: Router
+  ) { }
 }
