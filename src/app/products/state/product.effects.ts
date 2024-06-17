@@ -1,4 +1,4 @@
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, OnInitEffects, createEffect, ofType } from '@ngrx/effects';
 import { ProductAPIActions, ProductsPageActions } from './products.action';
 import { catchError, concatMap, exhaustMap, map, mergeMap } from 'rxjs/operators';
 
@@ -7,7 +7,12 @@ import { ProductsService } from '../products.service';
 import { of } from 'rxjs/internal/observable/of';
 
 @Injectable()
-export class ProductEffects {
+export class ProductEffects implements OnInitEffects {
+
+  ngrxOnInitEffects() {
+    return ProductsPageActions.loadProducts();
+  }
+
   constructor(private actions$: Actions, private productService: ProductsService) { }
 
   loadProducts$ = createEffect(() => this.actions$.pipe(
