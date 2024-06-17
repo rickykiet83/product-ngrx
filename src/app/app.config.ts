@@ -3,21 +3,21 @@ import {
   importProvidersFrom,
   isDevMode,
 } from '@angular/core';
+import { EffectsModule, provideEffects } from '@ngrx/effects';
 import { RouterState, StoreRouterConnectingModule, provideRouterStore, routerReducer } from '@ngrx/router-store';
+import { StoreDevtoolsModule, provideStoreDevtools } from '@ngrx/store-devtools';
 import { StoreModule, provideStore } from '@ngrx/store';
 import { metaReducers, reducers, routerFeatureKey } from './reducers';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
 
-import { EffectsModule } from '@ngrx/effects';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { appRoutes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,22 +30,20 @@ export const appConfig: ApplicationConfig = {
         strictActionSerializability: true,
       },
     }),
-    provideHttpClient(),
+    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideHttpClient(withInterceptorsFromDi()),
     provideRouterStore({
       stateKey: routerFeatureKey,
       routerState: RouterState.Minimal,
     }),
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideEffects(),
     provideAnimationsAsync(),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: isDevMode(),
+    }),
     importProvidersFrom([
       HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
-      StoreModule.forRoot({ router: routerReducer }),
-      StoreRouterConnectingModule.forRoot(),
-      EffectsModule.forRoot([]),
-      StoreDevtoolsModule.instrument({
-        maxAge: 25,
-        logOnly: !isDevMode()
-      })
     ]),
   ],
 };

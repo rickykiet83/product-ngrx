@@ -1,10 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { NgIf } from '@angular/common';
 import { Product } from '../product.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-product-edit',
+  imports: [ReactiveFormsModule, NgIf, RouterLink],
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.css'],
 })

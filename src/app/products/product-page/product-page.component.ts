@@ -1,12 +1,16 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { selectProductById, selectProductsLoading } from '../state/products.selector';
 
 import { Component } from '@angular/core';
 import { Product } from '../product.model';
+import { ProductEditComponent } from '../product-edit/product-edit.component';
 import { ProductsPageActions } from '../state/products.action';
 import { Store } from '@ngrx/store';
 
 @Component({
+  standalone: true,
   selector: 'app-product-page',
+  imports: [NgIf, ProductEditComponent, AsyncPipe],
   templateUrl: './product-page.component.html',
   styleUrls: ['./product-page.component.css'],
 })
